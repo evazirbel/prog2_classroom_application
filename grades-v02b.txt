@@ -1,0 +1,7 @@
+Testdaten (v01)
+Joe Cool: 4.57
+Jane Smart: 4.98
+Sam Simpson: 4.35
+Anna Calvi: 5.00
+John Cale: 4.94
+Joost Swarte: 3.55
