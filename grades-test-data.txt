@@ -1,7 +1,0 @@
-Testdaten (v01)
-Line 1: 4.57
-Line 2: 4.70
-Line 3: 5.00
-Line 4: 4.25
-Line 5: 3.00
-Line 6: 6.00
