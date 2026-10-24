@@ -1,15 +1,6 @@
-// aufräumen: alles unnötige aus Main methode raus--> in packages
-// alles bzgl. schreiben/lesen --> in io
-// course und student sind logic bzw. domain-logic (völlig unabhängig, auch vom gui)
-// 3-schichten-architektur wäre das Ziel: io, logic, gui
-// achtung: testdaten --> diese unbedingt mit abgeben
-
-import io.CourseDataReader;
-import io.MajorMapReader;
-import io.CourseReportWriter;
+import io.*;
 import logic.Course;
 import logic.Student;
-
 import java.util.Optional;
 import java.util.*;
 
@@ -17,23 +8,35 @@ import java.util.*;
 public class Main {
     public static void main(String[] args) {
 
-        String[] fileNames = {"grades-v02b.txt", "grades-test-data.txt"};
+        String[] fileNames = {"grades-v03.txt", "grades-test-data.txt", "grades-v04.txt"};
 
         MajorMapReader mapReader = new MajorMapReader("major-map.txt");
         Map<String, String> majorMap = mapReader.readMap();
 
         for(String fileName : fileNames) {
-             CourseDataReader cdr = new CourseDataReader(fileName, majorMap);
+            CourseDataReader cdr;
+
+            if (fileName.equals("grades-v04.txt")) {
+                cdr = new TagValueDataReader(fileName, majorMap);
+            } else {
+                cdr = new CsvDataReader(fileName, majorMap);
+            }
+
              Optional<Course> myCourse = cdr.readCourseData();
-             if(myCourse.isPresent()) {
-                 Course course = myCourse.get();
+             if(myCourse.isPresent()) { //check whether box contains sth, if empty skip
+                 Course course = myCourse.get(); //look inside the box & name it as object "course"
                  List<Student> myClass = course.getClassList();
                  System.out.println("Grades for: " + course.getName() + " (" + course.getId() + ")");
-                 for(Student student : myClass) {
-                     student.displayStudentInfo();
+
+                 double preGradeFactor = 0.3;
+                 for(Student student : myClass){
+                     double finalGrade = student.getFinalGrade(preGradeFactor);
+                     double roundedGrade = Math.round(finalGrade * 10.0) / 10.0;
+                     System.out.println("The final grade for " + student + " (" + student.getMajor() + ") is: " + roundedGrade);
                  }
+
                  CourseReportWriter crw = new CourseReportWriter("grades-report.txt");
-                 crw.printReport(course);
+                 crw.printReport(course, preGradeFactor);
              }else{
                  System.out.println("Unable to read student data, sorry: " + fileName);
              }

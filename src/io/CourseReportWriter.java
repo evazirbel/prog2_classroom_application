@@ -13,12 +13,12 @@ public class CourseReportWriter {
         this.reportFile = new File(fileName);
     }
 
-    public void printReport(Course course){
+    public void printReport(Course course, double preGradeFactor){
         try(PrintWriter writer = new PrintWriter(reportFile)){
             writer.println(course.getName() + " (" + course.getId() + ")");
             for(Student student : course.getClassList()){
-                String formattedAverage = String.format("%.2f", student.computeAverage());
-                writer.println(student.getName() + ": " + formattedAverage);
+                String formattedAverage = String.format("%.2f", student.getFinalGrade(preGradeFactor));
+                writer.println(student + ": " + formattedAverage);
             }
         }catch (FileNotFoundException e){
             System.err.println("Fehler beim Erstellen des Reports: " + e.getMessage());
