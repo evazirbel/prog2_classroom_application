@@ -1,0 +1,7 @@
+bz	Bioanalytics
+ch	Chemistry
+cb	Chemistry and Process Technology
+mi	Medical Informatics
+mt	Medical Engineering
+pt	Pharma Technology
+ut	Ecopreneurship

@@ -47,6 +47,4 @@ public class RegularStudent extends Student {
     public double getFinalGrade(double preGradeFactor){
         return (computeGradeAverage() * preGradeFactor) + (this.examGrade * (1.0 - preGradeFactor));
     }
-
-
 }

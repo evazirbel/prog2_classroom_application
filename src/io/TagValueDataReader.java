@@ -46,32 +46,29 @@ public class TagValueDataReader implements CourseDataReader {
                     String key = tokens[0].trim();
                     String value = tokens[1].trim();
 
-                    if(key.equals("name")){
-                        if(!currentName.isEmpty()){
-                            Student student;
-                            if(currentIsRepeating){
-                                student = new RepeatingStudent(currentName, currentMajor, currentExamGrade);
-                            }else{
-                                student = new RegularStudent(currentName, currentMajor, currentExamGrade, currentGrades);
+                    //just learned sth new: switch as an elegant way of if-else
+                    switch (key) {
+                        case "name" -> {
+                            if (!currentName.isEmpty()) {
+                                Student student;
+                                if (currentIsRepeating) {
+                                    student = new RepeatingStudent(currentName, currentMajor, currentExamGrade);
+                                } else {
+                                    student = new RegularStudent(currentName, currentMajor, currentExamGrade, currentGrades);
+                                }
+                                studentList.add(student);
+                                currentGrades = new ArrayList<>();
                             }
-                            studentList.add(student);
-                            currentGrades = new ArrayList<>();
+                            currentName = value;
                         }
-                        currentName = value;
-
-                    }else if(key.equals("major")){
-                        currentMajor = majorMap.get(value);
-
-                    }else if(key.equals("is-repeating")){
-                        currentIsRepeating = Boolean.parseBoolean(value);
-
-                    }else if(key.equals("exam-grade")){
-                        currentExamGrade = Double.parseDouble(value);
-
-                    }else if(key.equals("pre-grade")){
-                        String[] gradeTokens = value.split(",");
-                        for(String token:gradeTokens){
-                            currentGrades.add(Double.parseDouble(token));
+                        case "major" -> currentMajor = majorMap.get(value);
+                        case "is_repeating" -> currentIsRepeating = Boolean.parseBoolean(value);
+                        case "exam-grade" -> currentExamGrade = Double.parseDouble(value);
+                        case "pre-grade" -> {
+                            String[] gradeTokens = value.split(",");
+                            for (String token : gradeTokens) {
+                                currentGrades.add(Double.parseDouble(token));
+                            }
                         }
                     }
                 }
