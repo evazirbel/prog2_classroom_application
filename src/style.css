@@ -1,6 +1,82 @@
-.button{
--fx-background-color: #3b82f6;
--fx-text-fill: white;
--fx-font-weight: bold;
--fx-cursor: hand;
+.root {
+    -primary-color: #2563eb;
+    -primary-hover: #3b82f6;
+    -primary-active: #1d4ed8; /* also pressed */
+    -bg-window: #f8fafc;
+    -text-main: #1e293b;
+    -border-subtle: #cbd5e1;
+    -fx-font-family: "Segoe UI", system-ui, sans-serif;
+}
+
+
+/* === BUTTONS === */
+.primary-button {
+    -fx-background-color: -primary-color;
+    -fx-text-fill: white;
+    -fx-font-weight: bold;
+    -fx-background-radius: 6px;
+    -fx-padding: 8px 16px;
+    -fx-cursor: hand;
+}
+
+.primary-button:hover {
+    -fx-background-color: -primary-hover;
+    -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.3), 6, 0, 0, 2);
+}
+
+.primary-button:pressed {
+    -fx-background-color: -primary-pressed;
+    -fx-scale-x: 0.97;
+    -fx-scale-y: 0.97;
+}
+
+
+/* === TEXT AREA === */
+.text-area {
+    -fx-background-color: transparent;
+    -fx-border-color: -border-subtle;
+    -fx-border-radius: 6px;
+    -fx-background-radius: 6px;
+    -fx-font-family: "Consolas", "Courier New", monospace;
+    -fx-font-size: 13px;
+}
+
+
+/* === SLIDER === */
+.slider-preGradeFactor {
+    -fx-cursor: hand;
+}
+
+.slider-preGradeFactor .thumb {
+    -fx-background-color: #60a5fa;
+}
+
+.slider-preGradeFactor .thumb:pressed {
+    -fx-background-color: -primary-active;
+}
+
+.slider-preGradeFactor:hover {
+    -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.3), 6, 0, 0, 2);
+}
+
+
+/* === SPLIT PANE DIVIDER === */
+.split-pane-divider {
+    -fx-background-color: #94a3b8;
+    -fx-border-color: -border-subtle;
+    -fx-padding: 0 3px 0 3px;
+}
+
+
+
+
+/* === TABS === */
+.tab-pane {
+
+}
+
+
+/* === TEXT AREA === */
+.text-area {
+
 }

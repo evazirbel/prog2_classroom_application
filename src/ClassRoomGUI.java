@@ -13,12 +13,17 @@ public class ClassRoomGUI extends Application {
         launch(args);
     }
 
+    //Vertiefungsrichtungen(Studienrichtung) einlesen
+
     @Override
     public void start(Stage primaryStage){
         MajorMapReader mapReader = new MajorMapReader("major-map.txt");
         Map<String, String> majorMap = mapReader.readMap();
+
         MainPane mainPane = new MainPane(majorMap);
+
         Scene scene = new Scene(mainPane, 600, 450);
+        scene.getStylesheets().add(getClass().getResource("/style.css").toExternalForm());
 
         primaryStage.setScene(scene);
         primaryStage.setTitle("Classroom App");

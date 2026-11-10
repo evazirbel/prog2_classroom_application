@@ -21,17 +21,23 @@ public class TagValueDataReader implements CourseDataReader {
         this.majorMap = majorMap;
     }
 
+    // adjustments: annoyed of redundancy
+    // I created the method: commitCurrentStudent
     public Optional<Course> readCourseData(){
         List<Student> studentList = new ArrayList<>();
-        try(Scanner in = new Scanner(courseDataFile)){
+        try (Scanner in = new Scanner(courseDataFile)) {
             String courseId = "";
             String courseName = "";
-            if(in.hasNextLine()) {
+
+            if (in.hasNextLine()) {
                 courseId = in.nextLine().split(":")[1].trim();
             }
-            if(in.hasNextLine()) {
+
+            if (in.hasNextLine()) {
                 courseName = in.nextLine().split(":")[1].trim();
             }
+
+            //local variables:
             String currentName = "";
             String currentMajor = "";
             boolean currentIsRepeating = false;
@@ -42,25 +48,20 @@ public class TagValueDataReader implements CourseDataReader {
                 String line = in.nextLine();
                 String[] tokens = line.split(":");
 
-                if(tokens.length >= 2){
+                if (tokens.length >= 2){
                     String key = tokens[0].trim();
                     String value = tokens[1].trim();
 
                     //just learned sth new: switch as an elegant way of if-else
                     switch (key) {
                         case "name" -> {
-                            if (!currentName.isEmpty()) {
-                                Student student;
-                                if (currentIsRepeating) {
-                                    student = new RepeatingStudent(currentName, currentMajor, currentExamGrade);
-                                } else {
-                                    student = new RegularStudent(currentName, currentMajor, currentExamGrade, currentGrades);
-                                }
-                                studentList.add(student);
-                                currentGrades = new ArrayList<>();
-                            }
+                            addCurrentStudent(studentList, currentName, currentMajor, currentIsRepeating, currentExamGrade, currentGrades);
                             currentName = value;
-                        }
+                            currentMajor = "";
+                            currentIsRepeating = false;
+                            currentExamGrade = 0.0;
+                            currentGrades = new ArrayList<>();
+                            }
                         case "major" -> currentMajor = majorMap.get(value);
                         case "is_repeating" -> currentIsRepeating = Boolean.parseBoolean(value);
                         case "exam-grade" -> currentExamGrade = Double.parseDouble(value);
@@ -72,23 +73,23 @@ public class TagValueDataReader implements CourseDataReader {
                         }
                     }
                 }
-            } //den folgenden Block verstehe ich nicht, das kann ich nicht reproduzieren
-            if (!currentName.isEmpty()) {
-                Student student;
-                if (currentIsRepeating) {
-                    student = new RepeatingStudent(currentName, currentMajor, currentExamGrade);
-                } else {
-                    student = new RegularStudent(currentName, currentMajor, currentExamGrade, currentGrades);
-                }
-                studentList.add(student);
             }
-
+            addCurrentStudent(studentList, currentName, currentMajor, currentIsRepeating, currentExamGrade, currentGrades);
 
             Course course = new Course(courseId, courseName, studentList);
             return Optional.of(course);
-        } catch (FileNotFoundException e){
+        } catch (FileNotFoundException e) {
             System.err.println("Fehler beim Lesen der Daten: " + e.getMessage());
             return Optional.empty();
+        }
+    }
+
+    private void addCurrentStudent(List<Student> list, String name, String major, boolean isRepeating, double examGrade, List<Double> grades) {
+        if (name.isEmpty()) return;
+        if (isRepeating) {
+            list.add(new RepeatingStudent(name, major, examGrade));
+        } else {
+            list.add(new RegularStudent(name, major, examGrade, new ArrayList<>(grades)));
         }
     }
 }
