@@ -1,5 +1,6 @@
 package gui;
 import logic.Course;
+import logic.Student;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -51,5 +52,17 @@ public class StateModel {
     }
     public boolean isSortByGrade(){
         return this.sortByGrade;
+    }
+
+    private void sortStudents(){
+        if (course == null) return;
+
+        List<Student> students = course.getClassList();
+
+        if (sortByGrade) {
+            students.sort((s1, s2) -> Double.compare(s2.getFinalGrade(preGradeFactor), s1.getFinalGrade(preGradeFactor)));
+            } else {
+            students.sort((s1, s2) ->Double.compare(s1.getFinalGrade(preGradeFactor), s2.getFinalGrade(preGradeFactor)));
+        }
     }
 }

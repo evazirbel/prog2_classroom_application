@@ -62,7 +62,7 @@ public class GraphicsPane extends Pane implements StateObserver {
 
     @Override
     public void stateChanged() {
-        if (stateModel != null) {
+        if (stateModel.getCourse() != null) {
             this.students = stateModel.getCourse().getClassList();
             this.preGradeFactor = stateModel.getPreGradeFactor();
             drawGraphic();
