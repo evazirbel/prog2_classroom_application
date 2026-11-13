@@ -1,3 +1,21 @@
+//balken sortieren nach grösse, soll auf seite der graphicspane passieren
+//problem dabei: ich gebe graphics pane der control pane mit
+//gleichzeitig in die andere richtung geht das nicht
+//mit checkbox "sort by grade" soll das gelöst werden
+//noten links müssen mit geändert werden
+//das geht mit einer state klasse StateModel
+    //private List <StateHandlerList>
+    //im konstruktor die list initialisieren mit new
+    //methode addStateHandler(Statehandler statehandler){statehandlerList.add(statehandler)}
+    //wenn sich was in der setMethode ändert:
+    //interface, zb statehandler: methode stateChanged();
+    //diese mit einer void methode notify über for-each: stateHandler.stateChanged();
+
+//in MainPane statemodel erzeugen
+//dieses dann je den anderen beiden klassen mitgeben
+
+//nächste version: sogar mit mouse etwas verändern
+
 package gui;
 
 import javafx.scene.control.Tooltip;
@@ -11,15 +29,18 @@ import logic.Student;
 import java.util.ArrayList;
 import java.util.List;
 
-public class GraphicsPane extends Pane {
+public class GraphicsPane extends Pane implements StateObserver {
     private double preGradeFactor;
     private List<Student> students;
     private static final double THRESHOLD = 4;
+    private StateModel stateModel;
 
     //constructor
-    public GraphicsPane() {
+    public GraphicsPane(StateModel stateModel) {
         this.students = new ArrayList<>();
         this.preGradeFactor = 0.5;
+        this.stateModel = stateModel;
+        stateModel.addObserver(this);
 
         //as the window gets smaller/bigger the graphic must adjust(listener):
         widthProperty().addListener((observable, oldValue, newValue) -> drawGraphic());
@@ -37,6 +58,15 @@ public class GraphicsPane extends Pane {
 
         //so a new picture will be drawn
         drawGraphic();
+    }
+
+    @Override
+    public void stateChanged() {
+        if (stateModel != null) {
+            this.students = stateModel.getCourse().getClassList();
+            this.preGradeFactor = stateModel.getPreGradeFactor();
+            drawGraphic();
+        }
     }
 
     private void drawGraphic(){

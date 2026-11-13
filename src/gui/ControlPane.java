@@ -15,9 +15,11 @@ import java.util.Map;
 import java.util.Optional;
 
 
-public class ControlPane extends StackPane {
+public class ControlPane extends StackPane implements StateObserver {
     private Course course;
-    public ControlPane(Map<String, String> majorMap, GraphicsPane graphicsPane) {
+
+    public ControlPane(Map<String, String> majorMap, StateModel stateModel) {
+        stateModel.addObserver(this);
 
         //create several widgets
         Button loadButton = new Button("Load Data...");
@@ -38,7 +40,7 @@ public class ControlPane extends StackPane {
         HBox numberBox = new HBox(5);
         numberBox.getChildren().addAll(numberLabel, numberLabelValue);
 
-        // this box contains alllll the other stuff
+        //this box contains alllll the other stuff
         VBox mainBox = new VBox(10);
 
         mainBox.getChildren().addAll(
@@ -75,9 +77,7 @@ public class ControlPane extends StackPane {
 
                     //the slider's value will be used, so cool:
                     refreshText(numberLabelValue, textArea, preGradeFactorSlider.getValue());
-
-                    //"send" students to GraphicsPane:
-                    graphicsPane.setStudents(this.course.getClassList());
+                    stateModel.setCourse(this.course);
 
 
                 } else {
@@ -90,7 +90,7 @@ public class ControlPane extends StackPane {
         preGradeFactorSlider.valueProperty().addListener((observable, oldValue, newValue) -> {
             preGradeFactorLabel.setText(String.format("Pre Grade Factor: %.1f", newValue.doubleValue()));
             refreshText(numberLabelValue, textArea, preGradeFactorSlider.getValue());
-            graphicsPane.setPreGradeFactor(newValue.doubleValue());
+            stateModel.setPreGradeFactor(newValue.doubleValue());
         });
         this.getChildren().add(mainBox);
     }
@@ -109,5 +109,10 @@ public class ControlPane extends StackPane {
             result += student + ": " + formattedGrade + "\n";
         }
         textArea.setText(result);
+    }
+
+    @Override
+    public void stateChanged() {
+
     }
 }

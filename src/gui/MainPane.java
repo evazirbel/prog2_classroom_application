@@ -13,13 +13,14 @@ public class MainPane extends StackPane {
     public MainPane(Map<String, String> majorMap) {
         this.majorMap = majorMap;
 
-        // for kinda 2 areas in 1 box next to each other:
+        // for kinda 2 areas in 1 box but next to each other:
         SplitPane splitPane = new SplitPane();
         splitPane.getStyleClass().add("split-pane-divider");
 
-        // build 2 panes: graphics&control
-        GraphicsPane graphicsPane = new GraphicsPane();
-        ControlPane controlPane = new ControlPane(majorMap, graphicsPane);
+        // build 3 panes: stateModel & graphics & control
+        StateModel stateModel = new StateModel();
+        GraphicsPane graphicsPane = new GraphicsPane(stateModel);
+        ControlPane controlPane = new ControlPane(majorMap, stateModel);
 
         TabPane tabPane = new TabPane();
         tabPane.setTabClosingPolicy(TabPane.TabClosingPolicy.UNAVAILABLE);
