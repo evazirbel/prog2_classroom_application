@@ -68,6 +68,12 @@
 }
 
 
+/* === CHECKBOX === */
+.check-box {
+    -fx-padding: 12px 0 6px 30px; /* Oben, Rechts, Unten, Links (30px passend zum Balken-Rand!) */
+    -fx-font-weight: bold;
+    -fx-cursor: hand;
+}
 
 
 /* === TABS === */

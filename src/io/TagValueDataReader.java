@@ -67,7 +67,9 @@ public class TagValueDataReader implements CourseDataReader {
                         case "exam-grade" -> currentExamGrade = Double.parseDouble(value);
                         case "pre-grade" -> {
                             String[] gradeTokens = value.split(",");
+
                             for (String token : gradeTokens) {
+
                                 currentGrades.add(Double.parseDouble(token));
                             }
                         }
@@ -88,6 +90,7 @@ public class TagValueDataReader implements CourseDataReader {
         if (name.isEmpty()) return;
         if (isRepeating) {
             list.add(new RepeatingStudent(name, major, examGrade));
+
         } else {
             list.add(new RegularStudent(name, major, examGrade, new ArrayList<>(grades)));
         }

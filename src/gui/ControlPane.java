@@ -17,8 +17,21 @@ import java.util.Optional;
 
 public class ControlPane extends StackPane implements StateObserver {
     private Course course;
+    private Label numberLabelValue;
+    private TextArea textArea;
+    private double preGradeFactor;
+    private StateModel stateModel;
+
+    @Override
+    public void stateChanged() {
+        if (stateModel != null) {
+            this.course = stateModel.getCourse();
+            refreshText(numberLabelValue, textArea, stateModel.getPreGradeFactor());
+        }
+    }
 
     public ControlPane(Map<String, String> majorMap, StateModel stateModel) {
+        this.stateModel = stateModel;
         stateModel.addObserver(this);
 
         //create several widgets
@@ -26,13 +39,13 @@ public class ControlPane extends StackPane implements StateObserver {
         loadButton.getStyleClass().add("primary-button");
 
         Label numberLabel = new Label("Number of Students: ");
-        Label numberLabelValue = new Label("0");
+        this.numberLabelValue = new Label("0");
         Label preGradeFactorLabel = new Label("Pre Grade Factor: ");
 
         Slider preGradeFactorSlider = new Slider(0, 1, 0.5);
         preGradeFactorSlider.getStyleClass().add("slider-preGradeFactor");
 
-        TextArea textArea = new TextArea();
+        this.textArea = new TextArea();
         textArea.setEditable(false);
         textArea.getStyleClass().add("text-area");
 
@@ -79,7 +92,6 @@ public class ControlPane extends StackPane implements StateObserver {
                     refreshText(numberLabelValue, textArea, preGradeFactorSlider.getValue());
                     stateModel.setCourse(this.course);
 
-
                 } else {
                     Alert alert = new Alert(Alert.AlertType.ERROR, "Unable to read student data, sorry: " + selectedFile + "Do you have a '.txt' or '.csv' format?");
                     alert.showAndWait(); //created an alert & used method to display I guess?
@@ -103,16 +115,13 @@ public class ControlPane extends StackPane implements StateObserver {
 
         numberLabelValue.setText(String.valueOf(course.getClassList().size()));
         String result = "";
+
         for (Student student : course.getClassList()) {
+
             double grade = student.getFinalGrade(preGradeFactor);
             String formattedGrade = String.format("%.1f", grade);
             result += student + ": " + formattedGrade + "\n";
         }
         textArea.setText(result);
-    }
-
-    @Override
-    public void stateChanged() {
-
     }
 }

@@ -1,27 +1,15 @@
-//balken sortieren nach grösse, soll auf seite der graphicspane passieren
-//problem dabei: ich gebe graphics pane der control pane mit
-//gleichzeitig in die andere richtung geht das nicht
-//mit checkbox "sort by grade" soll das gelöst werden
-//noten links müssen mit geändert werden
-//das geht mit einer state klasse StateModel
-    //private List <StateHandlerList>
-    //im konstruktor die list initialisieren mit new
-    //methode addStateHandler(Statehandler statehandler){statehandlerList.add(statehandler)}
-    //wenn sich was in der setMethode ändert:
-    //interface, zb statehandler: methode stateChanged();
-    //diese mit einer void methode notify über for-each: stateHandler.stateChanged();
-
-//in MainPane statemodel erzeugen
-//dieses dann je den anderen beiden klassen mitgeben
 
 //nächste version: sogar mit mouse etwas verändern
 
 package gui;
 
+import javafx.scene.control.CheckBox;
 import javafx.scene.control.Tooltip;
+import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.Pane;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.*;
+import javafx.scene.shape.Rectangle;
 import javafx.scene.text.Text;
 import javafx.scene.transform.Rotate;
 import javafx.scene.transform.Translate;
@@ -29,17 +17,41 @@ import logic.Student;
 import java.util.ArrayList;
 import java.util.List;
 
-public class GraphicsPane extends Pane implements StateObserver {
+
+public class GraphicsPane extends BorderPane implements StateObserver {
+
     private double preGradeFactor;
     private List<Student> students;
     private static final double THRESHOLD = 4;
     private StateModel stateModel;
+    private Pane graphicsPane = new Pane();
+
 
     //constructor
     public GraphicsPane(StateModel stateModel) {
+
         this.students = new ArrayList<>();
         this.preGradeFactor = 0.5;
         this.stateModel = stateModel;
+
+        CheckBox checkboxSortByGrade = new CheckBox("Sort By Grade");
+        checkboxSortByGrade.getStyleClass().add("check-box");
+        checkboxSortByGrade.setOnAction(e -> {
+
+            //if checkbox is ticked: sortByGrade; else: sortByName
+            //also possible to do this without if-else but that is too much for my brain atm
+            if (checkboxSortByGrade.isSelected()) {
+                stateModel.setSortByGrade(true);
+            } else {
+                stateModel.setSortByGrade(false);
+            }
+        });
+
+
+        //section the Pane into top & center (checkbox & graphicsPane)
+        setTop(checkboxSortByGrade);
+        setCenter(graphicsPane);
+
         stateModel.addObserver(this);
 
         //as the window gets smaller/bigger the graphic must adjust(listener):
@@ -69,33 +81,36 @@ public class GraphicsPane extends Pane implements StateObserver {
         }
     }
 
-    private void drawGraphic(){
+    private void drawGraphic() {
         //necessary so there is always just 1 box per student instead of multiple ones overlaying:
-        getChildren().clear();
+        graphicsPane.getChildren().clear();
 
         if (students.isEmpty()){
             return; //to avoid problems
         }
 
         double margin = 30.0;
-        double barWidth = (getWidth() - 2 * margin) / students.size();
+        double barWidth = (graphicsPane.getWidth() - 2 * margin) / students.size();
 
         for (int i = 0; i < students.size(); i++){
 
             Student student = students.get(i);
             double barHeight = student.getFinalGrade(preGradeFactor) / 6 * (this.getHeight() - 2 * margin);
             double x = margin + barWidth * i;
-            double y = getHeight() - margin - barHeight;
+            double y = graphicsPane.getHeight() - margin - barHeight;
 
             //create gradeBars
             Rectangle gradeBar = new Rectangle(x, y, barWidth, barHeight);
             gradeBar.setStroke(Color.BLACK);
-            if (student.getFinalGrade(preGradeFactor) >= THRESHOLD){
+
+            if (student.getFinalGrade(preGradeFactor) >= THRESHOLD) {
                 gradeBar.setFill(javafx.scene.paint.Color.CORNFLOWERBLUE);
-            }else{
+
+            } else {
                 gradeBar.setFill(javafx.scene.paint.Color.RED);
             }
-            getChildren().add(gradeBar);
+
+            graphicsPane.getChildren().add(gradeBar);
 
             String grade = String.format("%.1f", student.getFinalGrade(preGradeFactor));
             Tooltip tip = new Tooltip(student.getName() + "\n" + grade);
@@ -103,15 +118,15 @@ public class GraphicsPane extends Pane implements StateObserver {
 
             //create nameTexts
             Text nameText = new Text(student.getName()); //creates some sort of name tag
-            nameText.getTransforms().add(new Translate(x + barWidth / 2, getHeight() - margin - 10)); // centers name tag
+            nameText.getTransforms().add(new Translate(x + barWidth / 2, getHeight() - margin - 40)); // centers name tag
             nameText.getTransforms().add(new Rotate(-90)); // rotates name tag -> nice and better readability
-            getChildren().add(nameText); // puts all the adjustments together and makes it a good name tag
+            graphicsPane.getChildren().add(nameText); // puts all the adjustments together and makes it a good name tag
         }
 
         double threshholdY = getHeight()- margin - (THRESHOLD / 6 * (getHeight() - 2 * margin));
         Line threshholdLine = new Line(0, threshholdY, getWidth(), threshholdY);
-        threshholdLine.setStroke(Color.RED);
+        threshholdLine.setStroke(Color.ORANGE);
         threshholdLine.setStrokeWidth(4);
-        getChildren().add(threshholdLine);
+        graphicsPane.getChildren().add(threshholdLine);
     }
 }

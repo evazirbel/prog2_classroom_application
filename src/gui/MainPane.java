@@ -8,9 +8,11 @@ import java.util.Map;
 
 // use: ctrl + click on a class to read everything about it
 public class MainPane extends StackPane {
+
     private Map<String, String> majorMap;
 
     public MainPane(Map<String, String> majorMap) {
+
         this.majorMap = majorMap;
 
         // for kinda 2 areas in 1 box but next to each other:
